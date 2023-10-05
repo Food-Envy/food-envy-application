@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "956648166081",
+    "project_id": "foodenvy-9e8d2",
+    "storage_bucket": "foodenvy-9e8d2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:956648166081:android:ec65aabf515790166eba40",
+        "android_client_info": {
+          "package_name": "com.example.food_envy_application"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCd0iAw1iFZiTOEBl-SyU7mfcAfn1ovyiM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
