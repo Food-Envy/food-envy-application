@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutterfire_ui/auth.dart';
+import 'package:food_envy_application/account_setup.dart';
 import 'home_page.dart';
 
 class AuthGate extends StatelessWidget {
@@ -25,7 +26,8 @@ class AuthGate extends StatelessWidget {
           );
         }
 
-        return const MyHomePage(title: 'Flutter Demo Home Page');
+        // return const MyHomePage(title: 'Flutter Demo Home Page');
+        return const AccountSetup();
       },
     );
   }

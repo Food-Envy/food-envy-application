@@ -44,12 +44,8 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: false,
-        title: Align(
-            alignment: Alignment.centerLeft,
-            child: Transform.scale(
-              child: Image.asset("assets/images/noBkgTitle.png"),
-              scale: 0.65,
-            )),
+        leadingWidth: 300,
+        leading: Image.asset("assets/images/noBkgTitle.png"),
       ),
       backgroundColor: const Color(0xFFFFF79C),
       body: Center(
