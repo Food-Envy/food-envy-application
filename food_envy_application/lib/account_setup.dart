@@ -1,9 +1,12 @@
-import 'dart:math';
-
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:food_envy_application/auth_gate.dart';
-
+import 'package:food_envy_application/home_page.dart';
+import 'package:food_envy_application/services/account_info.dart';
+import 'package:food_envy_application/services/util.dart';
+import 'package:provider/provider.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'firebase_options.dart';
 
 class AccountSetup extends StatefulWidget {
@@ -25,10 +28,15 @@ class AccountSetup extends StatefulWidget {
 class _AccountSetupState extends State<AccountSetup> {
   final firstNameController = TextEditingController();
   final lastNameController = TextEditingController();
-
+  final phoneNumberController = TextEditingController();
+  final userNameController = TextEditingController();
+  UserProfile? providerUser;
+  FirebaseFirestore db = FirebaseFirestore.instance;
+  String currentUser = getCurrentUserUuid();
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
+    providerUser = Provider.of<UserProfile>(context);
     // This method is rerun every time setState is called
     return Scaffold(
       body: Column(
@@ -37,12 +45,12 @@ class _AccountSetupState extends State<AccountSetup> {
           getTextField(
               "First Name", "Your first name here", firstNameController, width),
           getTextField(
-              "Last Name", "Your last name here", firstNameController, width),
+              "Last Name", "Your last name here", lastNameController, width),
           getTextField(
-              "Phone Number", "Your number here", firstNameController, width),
+              "Phone Number", "Your number here", phoneNumberController, width),
           getTextField(
-              "Username", "Your username here", firstNameController, width),
-          getEnterButton(width: width),
+              "Username", "Your username here", userNameController, width),
+          getEnterButton(width),
         ],
       ),
     );
@@ -94,6 +102,42 @@ class _AccountSetupState extends State<AccountSetup> {
     );
     return toReturn;
   }
+
+  SizedBox getEnterButton(double width) {
+    return SizedBox(
+      width: width - 60,
+      height: 80,
+      child: Padding(
+        padding: const EdgeInsets.only(top: 30),
+        child: TextButton(
+          onPressed: () {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              providerUser!.updateUser(
+                  firstNameController.text,
+                  lastNameController.text,
+                  phoneNumberController.text,
+                  FirebaseAuth.instance.currentUser!.email,
+                  userNameController.text);
+              providerUser!.toDocument(db, currentUser);
+            });
+            Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                    builder: (context) =>
+                        const MyHomePage(title: 'Flutter Demo Home Page')));
+          },
+          style: TextButton.styleFrom(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20)),
+              backgroundColor: const Color(0xFF94C668)),
+          child: const Text(
+            "Enter",
+            style: TextStyle(color: Color(0xFF034D22)),
+          ),
+        ),
+      ),
+    );
+  }
 }
 
 class getSignUpRow extends StatelessWidget {
@@ -124,37 +168,6 @@ class getSignUpRow extends StatelessWidget {
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class getEnterButton extends StatelessWidget {
-  const getEnterButton({
-    super.key,
-    required this.width,
-  });
-
-  final double width;
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: width - 60,
-      height: 80,
-      child: Padding(
-        padding: const EdgeInsets.only(top: 30),
-        child: TextButton(
-          onPressed: () => {},
-          style: TextButton.styleFrom(
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20)),
-              backgroundColor: const Color(0xFF94C668)),
-          child: const Text(
-            "Enter",
-            style: TextStyle(color: Color(0xFF034D22)),
-          ),
-        ),
       ),
     );
   }
