@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:food_envy_application/account_edit.dart';
 import 'package:food_envy_application/auth_gate.dart';
 
 import 'firebase_options.dart';
@@ -46,6 +47,13 @@ class _MyHomePageState extends State<MyHomePage> {
         centerTitle: false,
         leadingWidth: 300,
         leading: Image.asset("assets/images/noBkgTitle.png"),
+        title: TextButton(
+          onPressed: () {
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => const AccountEdit()));
+          },
+          child: Text("Profile"),
+        ),
       ),
       backgroundColor: const Color(0xFFFFF79C),
       body: Center(

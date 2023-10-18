@@ -9,13 +9,13 @@ import 'package:provider/provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'firebase_options.dart';
 
-class AccountSetup extends StatefulWidget {
-  const AccountSetup({super.key});
+class AccountEdit extends StatefulWidget {
+  const AccountEdit({super.key});
   @override
-  State<AccountSetup> createState() => _AccountSetupState();
+  State<AccountEdit> createState() => _AccountEditState();
 }
 
-class _AccountSetupState extends State<AccountSetup> {
+class _AccountEditState extends State<AccountEdit> {
   final firstNameController = TextEditingController();
   final lastNameController = TextEditingController();
   final phoneNumberController = TextEditingController();
@@ -27,6 +27,7 @@ class _AccountSetupState extends State<AccountSetup> {
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     providerUser = Provider.of<UserProfile>(context);
+    populateFields();
     // This method is rerun every time setState is called
     return Scaffold(
       body: Column(
@@ -44,6 +45,13 @@ class _AccountSetupState extends State<AccountSetup> {
         ],
       ),
     );
+  }
+
+  void populateFields() {
+    firstNameController.text = providerUser!.firstName!;
+    lastNameController.text = providerUser!.lastName!;
+    phoneNumberController.text = providerUser!.phoneNumber!;
+    userNameController.text = providerUser!.username!;
   }
 
   Padding getTextField(String iconText, String helperText,
@@ -137,7 +145,7 @@ class _AccountSetupState extends State<AccountSetup> {
           const Padding(
             padding: EdgeInsets.only(top: 100, left: 30),
             child: Text(
-              "Sign Up",
+              "Edit\nAccount",
               style: TextStyle(
                   fontSize: 50, color: Color(0xFF94C668), fontFamily: 'Sergio'),
             ),
