@@ -47,12 +47,14 @@ class _MyHomePageState extends State<MyHomePage> {
         centerTitle: false,
         leadingWidth: 300,
         leading: Image.asset("assets/images/noBkgTitle.png"),
-        title: TextButton(
+        title: IconButton(
           onPressed: () {
             Navigator.push(context,
                 MaterialPageRoute(builder: (context) => const AccountEdit()));
           },
-          child: Text("Profile"),
+          icon: const Icon(Icons.account_circle),
+          color: Color(0xFF034D22),
+          iconSize: 48,
         ),
       ),
       backgroundColor: const Color(0xFFFFF79C),

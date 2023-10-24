@@ -30,8 +30,9 @@ class _AccountEditState extends State<AccountEdit> {
     populateFields();
     // This method is rerun every time setState is called
     return Scaffold(
-      body: Column(
+      body: ListView(
         children: <Widget>[
+          getBackButton(),
           getSignUpRow(),
           getTextField(
               "First Name", "Your first name here", firstNameController, width),
@@ -52,6 +53,20 @@ class _AccountEditState extends State<AccountEdit> {
     lastNameController.text = providerUser!.lastName!;
     phoneNumberController.text = providerUser!.phoneNumber!;
     userNameController.text = providerUser!.username!;
+  }
+
+  IconButton getBackButton() {
+    return IconButton(
+      highlightColor: Colors.transparent,
+      iconSize: 36,
+      alignment: Alignment.topLeft,
+      padding: const EdgeInsets.only(top: 20, left: 30),
+      onPressed: () {
+        Navigator.pop(context);
+      },
+      icon: const Icon(Icons.arrow_back_ios_new),
+      color: Color(0xFF034D22),
+    );
   }
 
   Padding getTextField(String iconText, String helperText,
@@ -103,10 +118,9 @@ class _AccountEditState extends State<AccountEdit> {
 
   SizedBox getEnterButton(double width) {
     return SizedBox(
-      width: width - 60,
       height: 80,
       child: Padding(
-        padding: const EdgeInsets.only(top: 30),
+        padding: const EdgeInsets.only(top: 30, left: 30, right: 30),
         child: TextButton(
           onPressed: () {
             WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -118,18 +132,13 @@ class _AccountEditState extends State<AccountEdit> {
                   userNameController.text);
               providerUser!.toDocument(db, currentUser);
             });
-            Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                    builder: (context) =>
-                        const MyHomePage(title: 'Flutter Demo Home Page')));
           },
           style: TextButton.styleFrom(
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20)),
               backgroundColor: const Color(0xFF94C668)),
           child: const Text(
-            "Enter",
+            "Save Changes",
             style: TextStyle(color: Color(0xFF034D22)),
           ),
         ),
@@ -139,11 +148,11 @@ class _AccountEditState extends State<AccountEdit> {
 
   Container getSignUpRow() {
     return Container(
-      height: 300,
+      height: 225,
       child: Row(
         children: [
           const Padding(
-            padding: EdgeInsets.only(top: 100, left: 30),
+            padding: EdgeInsets.only(left: 30),
             child: Text(
               "Edit\nAccount",
               style: TextStyle(
@@ -152,7 +161,7 @@ class _AccountEditState extends State<AccountEdit> {
           ),
           Flexible(
             child: Padding(
-              padding: const EdgeInsets.only(top: 100, left: 50, right: 10),
+              padding: const EdgeInsets.only(left: 50, right: 10),
               child: Image.asset(
                 "assets/images/noBkgSecondaryLogo.png",
               ),
