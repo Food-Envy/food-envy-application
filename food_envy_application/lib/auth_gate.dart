@@ -53,7 +53,7 @@ class AuthGate extends StatelessWidget {
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
                     UserProfile? tempUser = snapshot.data;
-                    if (tempUser!.isInitialized()) {
+                    if (!tempUser!.isInitialized()) {
                       return const AccountSetup();
                     } else {
                       WidgetsBinding.instance.addPostFrameCallback((_) {

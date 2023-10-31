@@ -9,6 +9,7 @@ class UserProfile extends ChangeNotifier {
   String? phoneNumber;
   String? email;
   String? username;
+  List<String> friends = [];
 
   UserProfile();
   void updateUser(String? first, String? last, String? phone,
@@ -18,6 +19,18 @@ class UserProfile extends ChangeNotifier {
     phoneNumber = phone;
     email = emailParam;
     username = usernameParam;
+    notifyListeners();
+  }
+
+  void addFriend(String username) {
+    friends.add(username);
+    // add it for other person too
+    notifyListeners();
+  }
+
+  void removeFriend(String username) {
+    friends.remove(username);
+    // need to remove it for the other person too
     notifyListeners();
   }
 

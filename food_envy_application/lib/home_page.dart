@@ -4,6 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:food_envy_application/account_edit.dart';
 import 'package:food_envy_application/auth_gate.dart';
+import 'package:food_envy_application/manage_account.dart';
 
 import 'firebase_options.dart';
 
@@ -49,34 +50,18 @@ class _MyHomePageState extends State<MyHomePage> {
         leading: Image.asset("assets/images/noBkgTitle.png"),
         title: IconButton(
           onPressed: () {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => const AccountEdit()));
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const AccountManagePage()));
           },
           icon: const Icon(Icons.account_circle),
           color: Color(0xFF034D22),
           iconSize: 48,
         ),
       ),
-      backgroundColor: const Color(0xFFFFF79C),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+      backgroundColor: const Color(
+          0xFFFFF79C), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }
