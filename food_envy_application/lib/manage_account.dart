@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:food_envy_application/account_edit.dart';
@@ -48,6 +49,7 @@ class _AccountManagePageState extends State<AccountManagePage> {
           getSavedRestaurantsButton(),
           getProfileSettingsButton(),
           getManageFriendsButton(),
+          getLogOutButton()
         ],
       ),
     );
@@ -153,6 +155,27 @@ class _AccountManagePageState extends State<AccountManagePage> {
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
             backgroundColor: const Color(0xFF94C668)),
         child: const Text("Manage Friends",
+            style: TextStyle(color: Color(0xFF034D22), fontSize: 25)),
+      ),
+    );
+  }
+
+  Padding getLogOutButton() {
+    return Padding(
+      padding: const EdgeInsets.only(top: 20, left: 50, right: 50),
+      child: TextButton(
+        onPressed: () async {
+          await FirebaseAuth.instance.signOut();
+          Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                  builder: (BuildContext context) => const AuthGate()));
+        },
+        style: TextButton.styleFrom(
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            backgroundColor: const Color(0xFF94C668)),
+        child: const Text("Log Out",
             style: TextStyle(color: Color(0xFF034D22), fontSize: 25)),
       ),
     );

@@ -9,7 +9,8 @@ class UserProfile extends ChangeNotifier {
   String? phoneNumber;
   String? email;
   String? username;
-  List<String> friends = [];
+  List<dynamic> friends = [];
+  List<dynamic> requestedFriends = [];
 
   UserProfile();
   void updateUser(String? first, String? last, String? phone,
@@ -35,6 +36,8 @@ class UserProfile extends ChangeNotifier {
   }
 
   void copyUser(UserProfile toCopy) {
+    requestedFriends = toCopy.requestedFriends;
+    friends = toCopy.friends;
     updateUser(toCopy.firstName, toCopy.lastName, toCopy.phoneNumber,
         toCopy.email, toCopy.username);
   }
@@ -46,7 +49,9 @@ class UserProfile extends ChangeNotifier {
       "first_name": firstName,
       "last_name": lastName,
       "phone_number": phoneNumber,
-      "username": username
+      "username": username,
+      "friends": friends,
+      "requests": requestedFriends,
     });
   }
 
@@ -56,6 +61,10 @@ class UserProfile extends ChangeNotifier {
     lastName = doc.get("last_name");
     phoneNumber = doc.get("phone_number");
     username = doc.get("username");
+    requestedFriends = doc.get("requests");
+    friends = doc.get("friends");
+
+    //print(requestedFriends);
   }
 
   bool isInitialized() {

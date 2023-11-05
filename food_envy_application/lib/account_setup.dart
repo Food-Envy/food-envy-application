@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:food_envy_application/auth_gate.dart';
 import 'package:food_envy_application/home_page.dart';
 import 'package:food_envy_application/services/account_info.dart';
+import 'package:food_envy_application/services/user_searching.dart';
 import 'package:food_envy_application/services/util.dart';
 import 'package:provider/provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -110,6 +111,7 @@ class _AccountSetupState extends State<AccountSetup> {
                   userNameController.text);
               providerUser!.toDocument(db, currentUser);
             });
+            addUsername(db, currentUser, userNameController.text);
             Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
