@@ -4,6 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:food_envy_application/account_edit.dart';
 import 'package:food_envy_application/auth_gate.dart';
+import 'package:food_envy_application/bottom_app_bar.dart';
 import 'package:food_envy_application/manage_account.dart';
 
 import 'firebase_options.dart';
@@ -62,6 +63,7 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       backgroundColor: const Color(
           0xFFFFF79C), // This trailing comma makes auto-formatting nicer for build methods.
+      bottomNavigationBar: FoodEnvyBottomAppBar(),
     );
   }
 }
