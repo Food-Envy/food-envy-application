@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:food_envy_application/post_upload.dart';
 import 'package:food_envy_application/services/account_info.dart';
 import 'package:food_envy_application/services/photo_helper.dart';
 import 'package:image_cropper/image_cropper.dart';
@@ -35,7 +36,17 @@ class FoodEnvyBottomAppBar extends StatelessWidget {
             meal = "";
             await showMenu(context);
             if (meal != "") {
-              await takeImage();
+              File? imageFile = await takeImage(context);
+              if (imageFile != null) {
+                // ignore: use_build_context_synchronously
+                Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => PostUpload(
+                              image: imageFile,
+                              meal: meal,
+                            )));
+              }
             }
           },
         )
@@ -43,7 +54,7 @@ class FoodEnvyBottomAppBar extends StatelessWidget {
     );
   }
 
-  Future<void> takeImage() async {
+  Future<File?> takeImage(BuildContext context) async {
     final imgPicker = ImagePicker();
     try {
       final pickedFile = await imgPicker.pickImage(source: ImageSource.camera);
@@ -51,7 +62,8 @@ class FoodEnvyBottomAppBar extends StatelessWidget {
       if (pickedFile != null) {
         File imageFile = File(pickedFile.path);
         imageFile = await cropImage(imageFile);
-        await storeImage(imageFile);
+        return imageFile;
+        //await storeImage(imageFile);
       } else {
         // User canceled image picking
         print("User canceled their image upload");
@@ -59,6 +71,7 @@ class FoodEnvyBottomAppBar extends StatelessWidget {
     } catch (e) {
       print("Error picking and uploading image: $e");
     }
+    return null;
   }
 
   Future<File> cropImage(File image) async {
@@ -72,17 +85,6 @@ class FoodEnvyBottomAppBar extends StatelessWidget {
     } else {
       return image;
     }
-  }
-
-  Future<void> storeImage(File image) async {
-    final storageRef =
-        FirebaseStorage.instance.ref().child(basename(image.path));
-    final UploadTask uploadTask = storageRef.putFile(image);
-    await uploadTask.whenComplete(() async {
-      final String downloadURL = await storageRef.getDownloadURL();
-      await addPost(db, providerUser!.username!, downloadURL,
-          meal); // TODO: replace with actual meal
-    });
   }
 
   Future<void> showMenu(BuildContext context) {
