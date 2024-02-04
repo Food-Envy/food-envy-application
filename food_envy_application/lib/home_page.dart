@@ -6,7 +6,10 @@ import 'package:food_envy_application/account_edit.dart';
 import 'package:food_envy_application/auth_gate.dart';
 import 'package:food_envy_application/bottom_app_bar.dart';
 import 'package:food_envy_application/manage_account.dart';
-
+import 'package:food_envy_application/services/account_info.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:food_envy_application/services/meal_helper.dart';
+import 'package:provider/provider.dart';
 import 'firebase_options.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -28,21 +31,29 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+  UserProfile? providerUser;
+  FirebaseFirestore db = FirebaseFirestore.instance;
+  String currentMeal = "Breakfast";
+  Color breakfastColor = const Color(0xFFFFF79C);
+  Color lunchColor = const Color(0xFF034D22);
+  Color dinnerColor = const Color(0xFF034D22);
+  Color snackColor = const Color(0xFF034D22);
+  Map<String, List>? posts;
+  bool hasLoadedPosts = false;
 
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
+  void loadPosts() async {
+    posts = await getPosts(currentMeal, providerUser!.friends);
   }
 
   @override
   Widget build(BuildContext context) {
+    providerUser = Provider.of<UserProfile>(context);
+
+    if (!hasLoadedPosts) {
+      hasLoadedPosts = true;
+      loadPosts();
+    }
+
     // This method is rerun every time setState is called
     return Scaffold(
       appBar: AppBar(
@@ -64,6 +75,71 @@ class _MyHomePageState extends State<MyHomePage> {
       backgroundColor: const Color(
           0xFFFFF79C), // This trailing comma makes auto-formatting nicer for build methods.
       bottomNavigationBar: FoodEnvyBottomAppBar(),
+      body: Column(children: [getMealSelectionRow()]),
+    );
+  }
+
+  Container getMealSelectionRow() {
+    return Container(
+      color: const Color(0xfffffff3),
+      child: Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+        IconButton(
+            onPressed: () async {
+              currentMeal = "Breakfast";
+              breakfastColor = const Color(0xFFFFF79C);
+              lunchColor = const Color(0xFF034D22);
+              dinnerColor = const Color(0xFF034D22);
+              snackColor = const Color(0xFF034D22);
+              posts = await getPosts(currentMeal, providerUser!.friends);
+            },
+            icon: Icon(
+              Icons.breakfast_dining_outlined,
+              size: 48,
+              color: breakfastColor,
+            )),
+        IconButton(
+            onPressed: () async {
+              currentMeal = "Lunch";
+              lunchColor = const Color(0xFFFFF79C);
+              breakfastColor = const Color(0xFF034D22);
+              dinnerColor = const Color(0xFF034D22);
+              snackColor = const Color(0xFF034D22);
+              posts = await getPosts(currentMeal, providerUser!.friends);
+            },
+            icon: Icon(
+              Icons.lunch_dining_outlined,
+              size: 48,
+              color: lunchColor,
+            )),
+        IconButton(
+            onPressed: () async {
+              currentMeal = "Dinner";
+              dinnerColor = const Color(0xFFFFF79C);
+              lunchColor = const Color(0xFF034D22);
+              breakfastColor = const Color(0xFF034D22);
+              snackColor = const Color(0xFF034D22);
+              posts = await getPosts(currentMeal, providerUser!.friends);
+            },
+            icon: Icon(
+              Icons.dinner_dining_outlined,
+              size: 48,
+              color: dinnerColor,
+            )),
+        IconButton(
+            onPressed: () async {
+              currentMeal = "Snack";
+              snackColor = const Color(0xFFFFF79C);
+              lunchColor = const Color(0xFF034D22);
+              dinnerColor = const Color(0xFF034D22);
+              breakfastColor = const Color(0xFF034D22);
+              posts = await getPosts(currentMeal, providerUser!.friends);
+            },
+            icon: Icon(
+              Icons.cookie_outlined,
+              size: 48,
+              color: snackColor,
+            )),
+      ]),
     );
   }
 }
