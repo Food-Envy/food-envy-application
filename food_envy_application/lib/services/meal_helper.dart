@@ -9,6 +9,7 @@ Future<Map<String, List>?> getPosts(String meal, List friends) async {
   final DocumentSnapshot doc =
       await FirebaseFirestore.instance.collection('Photos').doc(meal).get();
   if (doc.exists) {
+    print(friends);
     Map<String, dynamic> posts = doc.data() as Map<String, dynamic>;
     Map<String, List> friendsPosts = {};
     friends.forEach((user) {

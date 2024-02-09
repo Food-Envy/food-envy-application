@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:math';
 
 import 'package:firebase_core/firebase_core.dart';
@@ -49,7 +50,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     providerUser = Provider.of<UserProfile>(context);
 
-    if (!hasLoadedPosts) {
+    if (!hasLoadedPosts && providerUser!.isInitialized()) {
       hasLoadedPosts = true;
       loadPosts();
     }
@@ -75,7 +76,66 @@ class _MyHomePageState extends State<MyHomePage> {
       backgroundColor: const Color(
           0xFFFFF79C), // This trailing comma makes auto-formatting nicer for build methods.
       bottomNavigationBar: FoodEnvyBottomAppBar(),
-      body: Column(children: [getMealSelectionRow()]),
+      body: ListView(children: [getMealSelectionRow(), getFriendsPosts()]),
+    );
+  }
+
+  Widget getFriendsPosts() {
+    List<Widget> posts = [];
+    if (providerUser!.isInitialized() && hasLoadedPosts) {
+      providerUser!.friends.forEach((friend) {
+        posts.add(generatePost(friend));
+      });
+    }
+    return Column(
+      children: posts,
+    );
+  }
+
+  Widget generatePost(String username) {
+    String url = posts![username]![0];
+    return Column(
+      children: [
+        Image.network(url, width: MediaQuery.of(context).size.width),
+        Container(
+          height: 100,
+          color: const Color(0xfffffff3),
+          child: Row(
+            children: [
+              IconButton(
+                  onPressed: () {},
+                  icon: const Icon(
+                    Icons.chat_bubble_outlined,
+                    color: Color(0xFF94C668),
+                    size: 40,
+                  )),
+              IconButton(
+                  onPressed: () {},
+                  icon: const Icon(
+                    Icons.menu_book_outlined,
+                    color: Color(0xFF94C668),
+                    size: 40,
+                  )),
+              IconButton(
+                  onPressed: () {},
+                  icon: const Icon(
+                    Icons.place,
+                    color: Color(0xFF94C668),
+                    size: 40,
+                  )),
+              Spacer(),
+              Padding(
+                padding: const EdgeInsets.only(right: 8.0),
+                child: Text(
+                  "@$username",
+                  style:
+                      const TextStyle(color: Color(0xFF034D22), fontSize: 25),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 
