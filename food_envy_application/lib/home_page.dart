@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:food_envy_application/account_edit.dart';
 import 'package:food_envy_application/auth_gate.dart';
 import 'package:food_envy_application/bottom_app_bar.dart';
@@ -40,10 +41,27 @@ class _MyHomePageState extends State<MyHomePage> {
   Color dinnerColor = const Color(0xFF034D22);
   Color snackColor = const Color(0xFF034D22);
   Map<String, List>? posts;
+  List<bool> showComments = [];
   bool hasLoadedPosts = false;
+  List<TextEditingController> controllers = [];
+  List<Padding> commentRows = [];
+  void initRowsAndControllers() {
+    showComments.clear();
+    controllers.clear();
+    commentRows.clear();
+    posts!.forEach((key, value) {
+      showComments.add(false);
+      controllers.add(TextEditingController());
+      commentRows.add(getTextField(
+          "Add a comment",
+          controllers[controllers.length - 1],
+          MediaQuery.of(context).size.width));
+    });
+  }
 
   void loadPosts() async {
     posts = await getPosts(currentMeal, providerUser!.friends);
+    initRowsAndControllers();
   }
 
   @override
@@ -74,28 +92,32 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
       backgroundColor: const Color(
-          0xFFFFF79C), // This trailing comma makes auto-formatting nicer for build methods.
+          0xfffffff3), // This trailing comma makes auto-formatting nicer for build methods.
       bottomNavigationBar: FoodEnvyBottomAppBar(),
       body: ListView(children: [getMealSelectionRow(), getFriendsPosts()]),
     );
   }
 
   Widget getFriendsPosts() {
-    List<Widget> posts = [];
-    if (providerUser!.isInitialized() && hasLoadedPosts) {
-      providerUser!.friends.forEach((friend) {
-        posts.add(generatePost(friend));
+    List<Widget> postWidgets = [];
+    int index = 0;
+    if (providerUser!.isInitialized() && hasLoadedPosts && posts != null) {
+      posts!.forEach((key, value) {
+        postWidgets.add(generatePost(key, index));
+        index = index + 1;
       });
     }
     return Column(
-      children: posts,
+      children: postWidgets,
     );
   }
 
-  Widget generatePost(String username) {
-    String url = posts![username]![0];
-    return Column(
-      children: [
+  Widget generatePost(String username, int index) {
+    List<Widget> columnBody = [];
+    if (posts != null) {
+      String url = posts![username]![0];
+
+      columnBody = [
         Image.network(url, width: MediaQuery.of(context).size.width),
         Container(
           height: 100,
@@ -103,7 +125,11 @@ class _MyHomePageState extends State<MyHomePage> {
           child: Row(
             children: [
               IconButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    setState(() {
+                      showComments[index] = !showComments[index];
+                    });
+                  },
                   icon: const Icon(
                     Icons.chat_bubble_outlined,
                     color: Color(0xFF94C668),
@@ -135,7 +161,13 @@ class _MyHomePageState extends State<MyHomePage> {
             ],
           ),
         ),
-      ],
+      ];
+      if (showComments[index]) {
+        columnBody.add(commentRows[index]);
+      }
+    }
+    return Column(
+      children: columnBody,
     );
   }
 
@@ -145,12 +177,15 @@ class _MyHomePageState extends State<MyHomePage> {
       child: Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
         IconButton(
             onPressed: () async {
+              print("reached");
               currentMeal = "Breakfast";
               breakfastColor = const Color(0xFFFFF79C);
               lunchColor = const Color(0xFF034D22);
               dinnerColor = const Color(0xFF034D22);
               snackColor = const Color(0xFF034D22);
               posts = await getPosts(currentMeal, providerUser!.friends);
+              print("length: ${posts!.length}");
+              initRowsAndControllers();
             },
             icon: Icon(
               Icons.breakfast_dining_outlined,
@@ -165,6 +200,7 @@ class _MyHomePageState extends State<MyHomePage> {
               dinnerColor = const Color(0xFF034D22);
               snackColor = const Color(0xFF034D22);
               posts = await getPosts(currentMeal, providerUser!.friends);
+              initRowsAndControllers();
             },
             icon: Icon(
               Icons.lunch_dining_outlined,
@@ -179,6 +215,7 @@ class _MyHomePageState extends State<MyHomePage> {
               breakfastColor = const Color(0xFF034D22);
               snackColor = const Color(0xFF034D22);
               posts = await getPosts(currentMeal, providerUser!.friends);
+              initRowsAndControllers();
             },
             icon: Icon(
               Icons.dinner_dining_outlined,
@@ -193,6 +230,7 @@ class _MyHomePageState extends State<MyHomePage> {
               dinnerColor = const Color(0xFF034D22);
               breakfastColor = const Color(0xFF034D22);
               posts = await getPosts(currentMeal, providerUser!.friends);
+              initRowsAndControllers();
             },
             icon: Icon(
               Icons.cookie_outlined,
@@ -201,5 +239,52 @@ class _MyHomePageState extends State<MyHomePage> {
             )),
       ]),
     );
+  }
+
+  Padding getTextField(
+      String helperText, TextEditingController controller, double width) {
+    //double height = MediaQuery.of(context).size.height;
+    // used for padding for non-checkbox items
+    var paddingForBox = const EdgeInsets.all(10);
+    Padding toReturn = Padding(
+      padding: paddingForBox,
+      child: Row(
+        children: [
+          Expanded(
+            child: TextField(
+              style: const TextStyle(color: Color(0xFF034D22)),
+              controller: controller,
+              decoration: InputDecoration(
+                hintText: helperText,
+                hintStyle: const TextStyle(
+                  color: Color(0xFF034D22),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide:
+                      const BorderSide(width: 3, color: Color(0xFF034D22)),
+                  borderRadius: BorderRadius.circular(20), //<-- SEE HERE
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderSide:
+                      const BorderSide(width: 3, color: Color(0xFF034D22)),
+                  borderRadius: BorderRadius.circular(20), //<-- SEE HERE
+                ),
+              ),
+              cursorColor: const Color(0xFF034D22),
+            ),
+          ),
+          IconButton(
+              iconSize: 48,
+              onPressed: () {
+                print(controller.text);
+              },
+              icon: const Icon(
+                Icons.send,
+                color: Color(0xFF94C668),
+              )),
+        ],
+      ),
+    );
+    return toReturn;
   }
 }
