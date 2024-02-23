@@ -10,6 +10,7 @@ import 'package:food_envy_application/bottom_app_bar.dart';
 import 'package:food_envy_application/manage_account.dart';
 import 'package:food_envy_application/services/account_info.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:food_envy_application/services/comment_upload.dart';
 import 'package:food_envy_application/services/meal_helper.dart';
 import 'package:provider/provider.dart';
 import 'firebase_options.dart';
@@ -45,17 +46,40 @@ class _MyHomePageState extends State<MyHomePage> {
   bool hasLoadedPosts = false;
   List<TextEditingController> controllers = [];
   List<Padding> commentRows = [];
+  bool updateComments = false;
+  int indexToUpdate = 0;
   void initRowsAndControllers() {
     showComments.clear();
     controllers.clear();
     commentRows.clear();
+    int index = 0;
     posts!.forEach((key, value) {
       showComments.add(false);
       controllers.add(TextEditingController());
       commentRows.add(getTextField(
           "Add a comment",
           controllers[controllers.length - 1],
-          MediaQuery.of(context).size.width));
+          MediaQuery.of(context).size.width,
+          key,
+          providerUser!.username!,
+          value,
+          index));
+      index += 1;
+    });
+  }
+
+  void updateCommentsForPost() {
+    int index = 0;
+    posts!.forEach((key, value) {
+      commentRows[index] = (getTextField(
+          "Add a comment",
+          controllers[controllers.length - 1],
+          MediaQuery.of(context).size.width,
+          key,
+          providerUser!.username!,
+          value,
+          index));
+      index += 1;
     });
   }
 
@@ -71,6 +95,11 @@ class _MyHomePageState extends State<MyHomePage> {
     if (!hasLoadedPosts && providerUser!.isInitialized()) {
       hasLoadedPosts = true;
       loadPosts();
+    }
+
+    if (updateComments) {
+      updateComments = false;
+      updateCommentsForPost();
     }
 
     // This method is rerun every time setState is called
@@ -242,13 +271,45 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Padding getTextField(
-      String helperText, TextEditingController controller, double width) {
+      String helperText,
+      TextEditingController controller,
+      double width,
+      String posterUsername,
+      String commenterUsername,
+      List post,
+      int index) {
     //double height = MediaQuery.of(context).size.height;
-    // used for padding for non-checkbox items
-    var paddingForBox = const EdgeInsets.all(10);
-    Padding toReturn = Padding(
-      padding: paddingForBox,
-      child: Row(
+    List<Widget> columnBody = [];
+    if (post.length > 4) {
+      columnBody.add(const Divider(
+        thickness: 2,
+        color: Color(0xFF034D22),
+      ));
+    }
+    for (int i = 4; i < post.length; i++) {
+      String comment = post[i];
+      int splitIndex = comment.indexOf(",");
+      String username = "@${comment.substring(0, splitIndex)}:   ";
+      String commentText = comment.substring(splitIndex + 1);
+      Padding commentWidget = Padding(
+        padding: EdgeInsets.only(bottom: 3.0),
+        child: Row(children: [
+          Text(
+            username,
+            style: const TextStyle(color: Color(0xFF034D22), fontSize: 24),
+          ),
+          Text(commentText,
+              style: const TextStyle(color: Color(0xFF034D22), fontSize: 24))
+        ]),
+      );
+      columnBody.add(commentWidget);
+    }
+    columnBody.add(const Divider(
+      thickness: 2,
+      color: Color(0xFF034D22),
+    ));
+    columnBody.add(
+      Row(
         children: [
           Expanded(
             child: TextField(
@@ -275,14 +336,29 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           IconButton(
               iconSize: 48,
-              onPressed: () {
-                print(controller.text);
+              onPressed: () async {
+                String toAdd = await addComment(db, posterUsername,
+                    commenterUsername, controller.text, currentMeal);
+                controller.clear();
+                setState(() {
+                  posts![posterUsername]!.add(toAdd);
+                });
+                updateComments = true;
+                indexToUpdate = index;
               },
               icon: const Icon(
                 Icons.send,
                 color: Color(0xFF94C668),
               )),
         ],
+      ),
+    );
+    // used for padding for non-checkbox items
+    var paddingForBox = const EdgeInsets.all(10);
+    Padding toReturn = Padding(
+      padding: paddingForBox,
+      child: Column(
+        children: columnBody,
       ),
     );
     return toReturn;
