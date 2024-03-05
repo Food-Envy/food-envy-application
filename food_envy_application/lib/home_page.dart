@@ -14,6 +14,11 @@ import 'package:food_envy_application/services/comment_upload.dart';
 import 'package:food_envy_application/services/meal_helper.dart';
 import 'package:provider/provider.dart';
 import 'firebase_options.dart';
+import 'package:food_envy_application/post_upload.dart';
+import 'package:food_envy_application/services/account_info.dart';
+import 'package:food_envy_application/services/photo_helper.dart';
+import 'package:image_cropper/image_cropper.dart';
+import 'package:image_picker/image_picker.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
@@ -34,6 +39,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  String mealToPost = "";
   UserProfile? providerUser;
   FirebaseFirestore db = FirebaseFirestore.instance;
   String currentMeal = "Breakfast";
@@ -122,7 +128,7 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       backgroundColor: const Color(
           0xfffffff3), // This trailing comma makes auto-formatting nicer for build methods.
-      bottomNavigationBar: FoodEnvyBottomAppBar(),
+      //bottomNavigationBar: FoodEnvyBottomAppBar(),
       body: ListView(children: [getMealSelectionRow(), getFriendsPosts()]),
     );
   }
@@ -204,6 +210,30 @@ class _MyHomePageState extends State<MyHomePage> {
     return Container(
       color: const Color(0xfffffff3),
       child: Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+        IconButton(
+          icon: const Icon(
+            Icons.photo_camera,
+            size: 48,
+            color: Color(0xFF034D22),
+          ),
+          onPressed: () async {
+            mealToPost = "";
+            await showMenu(context);
+            if (mealToPost != "") {
+              File? imageFile = await takeImage(context);
+              if (imageFile != null) {
+                // ignore: use_build_context_synchronously
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => PostUpload(
+                              image: imageFile,
+                              meal: mealToPost,
+                            )));
+              }
+            }
+          },
+        ),
         IconButton(
             onPressed: () async {
               print("reached");
@@ -362,5 +392,87 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
     );
     return toReturn;
+  }
+
+  Future<File?> takeImage(BuildContext context) async {
+    final imgPicker = ImagePicker();
+    try {
+      final pickedFile = await imgPicker.pickImage(source: ImageSource.camera);
+
+      if (pickedFile != null) {
+        File imageFile = File(pickedFile.path);
+        imageFile = await cropImage(imageFile);
+        return imageFile;
+        //await storeImage(imageFile);
+      } else {
+        // User canceled image picking
+        print("User canceled their image upload");
+      }
+    } catch (e) {
+      print("Error picking and uploading image: $e");
+    }
+    return null;
+  }
+
+  Future<File> cropImage(File image) async {
+    CroppedFile? result = await ImageCropper().cropImage(
+        sourcePath: image.path,
+        aspectRatio: const CropAspectRatio(ratioX: 1, ratioY: 1),
+        aspectRatioPresets: [CropAspectRatioPreset.square]);
+
+    if (result != null) {
+      return File(result.path);
+    } else {
+      return image;
+    }
+  }
+
+  Future<void> showMenu(BuildContext context) {
+    return showDialog<void>(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("Choose A Meal"),
+            backgroundColor: const Color(0xFF94C668),
+            content: Column(mainAxisSize: MainAxisSize.min, children: [
+              Align(
+                alignment: Alignment.centerLeft,
+                child: TextButton(
+                    onPressed: () {
+                      mealToPost = "Breakfast";
+                      Navigator.pop(context);
+                    },
+                    child: Text("Breakfast")),
+              ),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: TextButton(
+                    onPressed: () {
+                      mealToPost = "Lunch";
+                      Navigator.pop(context);
+                    },
+                    child: Text("Lunch")),
+              ),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: TextButton(
+                    onPressed: () {
+                      mealToPost = "Dinner";
+                      Navigator.pop(context);
+                    },
+                    child: Text("Dinner")),
+              ),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: TextButton(
+                    onPressed: () {
+                      mealToPost = "Snack";
+                      Navigator.pop(context);
+                    },
+                    child: Text("Snack")),
+              ),
+            ]),
+          );
+        });
   }
 }

@@ -39,7 +39,7 @@ class FoodEnvyBottomAppBar extends StatelessWidget {
               File? imageFile = await takeImage(context);
               if (imageFile != null) {
                 // ignore: use_build_context_synchronously
-                Navigator.pushReplacement(
+                Navigator.push(
                     context,
                     MaterialPageRoute(
                         builder: (context) => PostUpload(

@@ -205,12 +205,13 @@ class _PostUploadState extends State<PostUpload> {
           IconButton(
               iconSize: 48,
               onPressed: () {
-                Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const MyHomePage(
-                              title: "",
-                            )));
+                // Navigator.pushReplacement(
+                //     context,
+                //     MaterialPageRoute(
+                //         builder: (context) => const MyHomePage(
+                //               title: "",
+                //             )));
+                Navigator.pop(context);
               },
               icon: const Icon(
                 Icons.arrow_back_ios_new,
@@ -248,12 +249,13 @@ class _PostUploadState extends State<PostUpload> {
           commentController.text,
           recipeController.text,
           locationController.text);
-      Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-              builder: (context) => const MyHomePage(
-                    title: "",
-                  )));
+      // Navigator.pushReplacement(
+      //     context,
+      //     MaterialPageRoute(
+      //         builder: (context) => const MyHomePage(
+      //               title: "",
+      //             )));
+      Navigator.pop(context);
     });
   }
 }

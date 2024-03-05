@@ -1,6 +1,6 @@
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart' hide EmailAuthProvider;
 import 'package:flutter/material.dart';
-import 'package:flutterfire_ui/auth.dart';
+import 'package:firebase_ui_auth/firebase_ui_auth.dart';
 import 'package:food_envy_application/account_setup.dart';
 import 'package:food_envy_application/services/account_info.dart';
 import 'package:food_envy_application/services/util.dart';
@@ -38,8 +38,8 @@ class AuthGate extends StatelessWidget {
                 child: Image.asset("assets/images/noBkgPrimaryLogo.png"),
               );
             },
-            providerConfigs: const [
-              EmailProviderConfiguration(),
+            providers: [
+              EmailAuthProvider(),
             ],
           );
         }
