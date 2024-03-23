@@ -1,1 +1,0 @@
- /Users/aydansmith/Documents/foodEnvyTest/food-envy-application/food_envy_application/.dart_tool/flutter_build/ba66bc1e501354369e0307f29505ad16/native_assets.yaml: 
