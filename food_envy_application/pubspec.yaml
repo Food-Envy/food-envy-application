@@ -44,6 +44,7 @@ dependencies:
   firebase_storage: ^11.5.1
   firebase_ui_auth: ^1.13.1
   cloud_firestore: ^4.15.7
+  image: ^4.1.7
 
 dev_dependencies:
   flutter_test:
@@ -72,7 +73,16 @@ flutter:
     - assets/images/noBkgPrimaryLogo.png
     - assets/images/noBkgTitle.png
     - assets/images/noBkgSecondaryLogo.png
-
+    - assets/images/LSelected.png
+    - assets/images/LNormal.png
+    - assets/images/BSelected.png
+    - assets/images/BNormal.png
+    - assets/images/DSelected.png
+    - assets/images/DNormal.png
+    - assets/images/SSelected.png
+    - assets/images/SNormal.png
+    - assets/images/Comment.png
+    - assets/images/Recipe.png
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
 

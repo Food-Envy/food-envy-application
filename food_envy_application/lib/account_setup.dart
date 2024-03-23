@@ -30,7 +30,7 @@ class _AccountSetupState extends State<AccountSetup> {
     providerUser = Provider.of<UserProfile>(context);
     // This method is rerun every time setState is called
     return Scaffold(
-      body: Column(
+      body: ListView(
         children: <Widget>[
           getSignUpRow(),
           getTextField(

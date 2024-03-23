@@ -19,6 +19,7 @@ import 'package:food_envy_application/services/account_info.dart';
 import 'package:food_envy_application/services/photo_helper.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:image/image.dart' as img;
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
@@ -149,6 +150,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Widget generatePost(String username, int index) {
     List<Widget> columnBody = [];
+    Image commentImage = Image.asset("assets/images/Comment.png");
+    Image recipeImage = Image.asset("assets/images/Recipe.png");
     if (posts != null) {
       String url = posts![username]![0];
 
@@ -165,24 +168,14 @@ class _MyHomePageState extends State<MyHomePage> {
                       showComments[index] = !showComments[index];
                     });
                   },
-                  icon: const Icon(
-                    Icons.chat_bubble_outlined,
-                    color: Color(0xFF94C668),
-                    size: 40,
-                  )),
-              IconButton(
-                  onPressed: () {},
-                  icon: const Icon(
-                    Icons.menu_book_outlined,
-                    color: Color(0xFF94C668),
-                    size: 40,
-                  )),
+                  icon: commentImage),
+              IconButton(onPressed: () {}, icon: recipeImage),
               IconButton(
                   onPressed: () {},
                   icon: const Icon(
                     Icons.place,
                     color: Color(0xFF94C668),
-                    size: 40,
+                    size: 50,
                   )),
               Spacer(),
               Padding(
@@ -207,6 +200,27 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Container getMealSelectionRow() {
+    Image lunchPhoto = Image.asset("assets/images/LNormal.png");
+    if (currentMeal == "Lunch") {
+      lunchPhoto = Image.asset("assets/images/LSelected.png");
+    }
+
+    Image breakfastPhoto = Image.asset("assets/images/BNormal.png");
+    if (currentMeal == "Breakfast") {
+      breakfastPhoto = Image.asset("assets/images/BSelected.png");
+    }
+
+    Image dinnerPhoto = Image.asset("assets/images/DNormal.png");
+    if (currentMeal == "Dinner") {
+      dinnerPhoto = Image.asset("assets/images/DSelected.png");
+    }
+
+    Image snackPhoto = Image.asset("assets/images/SNormal.png");
+    if (currentMeal == "Snack") {
+      snackPhoto = Image.asset("assets/images/SSelected.png");
+    }
+
+    //lunchImage =
     return Container(
       color: const Color(0xfffffff3),
       child: Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
@@ -246,11 +260,7 @@ class _MyHomePageState extends State<MyHomePage> {
               print("length: ${posts!.length}");
               initRowsAndControllers();
             },
-            icon: Icon(
-              Icons.breakfast_dining_outlined,
-              size: 48,
-              color: breakfastColor,
-            )),
+            icon: breakfastPhoto),
         IconButton(
             onPressed: () async {
               currentMeal = "Lunch";
@@ -261,11 +271,7 @@ class _MyHomePageState extends State<MyHomePage> {
               posts = await getPosts(currentMeal, providerUser!.friends);
               initRowsAndControllers();
             },
-            icon: Icon(
-              Icons.lunch_dining_outlined,
-              size: 48,
-              color: lunchColor,
-            )),
+            icon: lunchPhoto),
         IconButton(
             onPressed: () async {
               currentMeal = "Dinner";
@@ -276,11 +282,7 @@ class _MyHomePageState extends State<MyHomePage> {
               posts = await getPosts(currentMeal, providerUser!.friends);
               initRowsAndControllers();
             },
-            icon: Icon(
-              Icons.dinner_dining_outlined,
-              size: 48,
-              color: dinnerColor,
-            )),
+            icon: dinnerPhoto),
         IconButton(
             onPressed: () async {
               currentMeal = "Snack";
@@ -291,11 +293,7 @@ class _MyHomePageState extends State<MyHomePage> {
               posts = await getPosts(currentMeal, providerUser!.friends);
               initRowsAndControllers();
             },
-            icon: Icon(
-              Icons.cookie_outlined,
-              size: 48,
-              color: snackColor,
-            )),
+            icon: snackPhoto),
       ]),
     );
   }
