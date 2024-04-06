@@ -12,6 +12,7 @@ import 'package:food_envy_application/services/account_info.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:food_envy_application/services/comment_upload.dart';
 import 'package:food_envy_application/services/meal_helper.dart';
+import 'package:food_envy_application/services/util.dart';
 import 'package:provider/provider.dart';
 import 'firebase_options.dart';
 import 'package:food_envy_application/post_upload.dart';
@@ -98,7 +99,6 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     providerUser = Provider.of<UserProfile>(context);
-
     if (!hasLoadedPosts && providerUser!.isInitialized()) {
       hasLoadedPosts = true;
       loadPosts();
@@ -108,7 +108,6 @@ class _MyHomePageState extends State<MyHomePage> {
       updateComments = false;
       updateCommentsForPost();
     }
-
     // This method is rerun every time setState is called
     return Scaffold(
       appBar: AppBar(
@@ -154,7 +153,7 @@ class _MyHomePageState extends State<MyHomePage> {
     Image recipeImage = Image.asset("assets/images/Recipe.png");
     if (posts != null) {
       String url = posts![username]![0];
-
+      String recipe = posts![username]![2];
       columnBody = [
         Image.network(url, width: MediaQuery.of(context).size.width),
         Container(
@@ -169,7 +168,11 @@ class _MyHomePageState extends State<MyHomePage> {
                     });
                   },
                   icon: commentImage),
-              IconButton(onPressed: () {}, icon: recipeImage),
+              IconButton(
+                  onPressed: () {
+                    providerUser!.addRecipe(db, recipe, getCurrentUserUuid());
+                  },
+                  icon: recipeImage),
               IconButton(
                   onPressed: () {},
                   icon: const Icon(
@@ -435,12 +438,12 @@ class _MyHomePageState extends State<MyHomePage> {
             content: Column(mainAxisSize: MainAxisSize.min, children: [
               Align(
                 alignment: Alignment.centerLeft,
-                child: TextButton(
+                child: IconButton(
                     onPressed: () {
                       mealToPost = "Breakfast";
                       Navigator.pop(context);
                     },
-                    child: Text("Breakfast")),
+                    icon: Text("Breakfast")),
               ),
               Align(
                 alignment: Alignment.centerLeft,

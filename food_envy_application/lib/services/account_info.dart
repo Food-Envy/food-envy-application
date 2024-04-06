@@ -11,7 +11,7 @@ class UserProfile extends ChangeNotifier {
   String? username;
   List<dynamic> friends = [];
   List<dynamic> requestedFriends = [];
-
+  List<dynamic> recipes = [];
   UserProfile();
   void updateUser(String? first, String? last, String? phone,
       String? emailParam, String? usernameParam) {
@@ -26,6 +26,14 @@ class UserProfile extends ChangeNotifier {
   void addFriend(String username) {
     friends.add(username);
     // add it for other person too
+    notifyListeners();
+  }
+
+  void addRecipe(FirebaseFirestore db, String url, String currentUser) {
+    recipes.add(url);
+    db.collection("Users").doc(currentUser).update({
+      "recipes": FieldValue.arrayUnion([url])
+    });
     notifyListeners();
   }
 
@@ -52,6 +60,7 @@ class UserProfile extends ChangeNotifier {
       "username": username,
       "friends": friends,
       "requests": requestedFriends,
+      "recipes": recipes,
     });
   }
 
@@ -63,8 +72,7 @@ class UserProfile extends ChangeNotifier {
     username = doc.get("username");
     requestedFriends = doc.get("requests");
     friends = doc.get("friends");
-
-    //print(requestedFriends);
+    recipes = doc.get("recipes");
   }
 
   bool isInitialized() {
