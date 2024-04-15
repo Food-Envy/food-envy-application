@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:food_envy_application/account_edit.dart';
 import 'package:food_envy_application/auth_gate.dart';
 import 'package:food_envy_application/manage_friends.dart';
+import 'package:food_envy_application/manage_locations.dart';
 import 'package:food_envy_application/manage_recipes.dart';
 
 import 'firebase_options.dart';
@@ -117,12 +118,17 @@ class _AccountManagePageState extends State<AccountManagePage> {
     return Padding(
       padding: const EdgeInsets.only(top: 20, left: 50, right: 50),
       child: TextButton(
-        onPressed: () {},
+        onPressed: () {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => const LocationManagePage()));
+        },
         style: TextButton.styleFrom(
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
             backgroundColor: const Color(0xFF94C668)),
-        child: const Text("Saved Restaurants",
+        child: const Text("Saved Locations",
             style: TextStyle(color: Color(0xFF034D22), fontSize: 25)),
       ),
     );

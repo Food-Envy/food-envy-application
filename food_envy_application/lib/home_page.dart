@@ -154,6 +154,7 @@ class _MyHomePageState extends State<MyHomePage> {
     if (posts != null) {
       String url = posts![username]![0];
       String recipe = posts![username]![2];
+      String location = posts![username]![3];
       columnBody = [
         Image.network(url, width: MediaQuery.of(context).size.width),
         Container(
@@ -174,7 +175,10 @@ class _MyHomePageState extends State<MyHomePage> {
                   },
                   icon: recipeImage),
               IconButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    providerUser!
+                        .addLocation(db, location, getCurrentUserUuid());
+                  },
                   icon: const Icon(
                     Icons.place,
                     color: Color(0xFF94C668),
